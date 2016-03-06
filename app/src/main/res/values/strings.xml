@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">URLBookMarkManager</string>
+    <string name="action_settings">Settings</string>
+    <string name="url_name">Url Name</string>
+    <string name="url_value">url link</string>
+    <string name="dialog_title">Add URL</string>
+    <string name="add">Add Url</string>
+    <string name="cancel">Cancel</string>
+</resources>
