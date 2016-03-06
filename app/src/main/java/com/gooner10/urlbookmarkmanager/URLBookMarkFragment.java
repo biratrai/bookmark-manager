@@ -9,8 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gooner10.urlbookmarkmanager.models.BookMarkModel;
 
@@ -29,6 +32,7 @@ public class URLBookMarkFragment extends Fragment {
     private ListView mListView;
     private Realm realm;
     private BookMarkAdapter bookMarkAdapter;
+    private int position;
 
     public URLBookMarkFragment() {
     }
@@ -81,6 +85,14 @@ public class URLBookMarkFragment extends Fragment {
             }
         });
 
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position1, long id) {
+
+                TextView urlLink = (TextView) view.findViewById(R.id.url);
+                Toast.makeText(getActivity(), "Toast "+urlLink.getText() + position1, Toast.LENGTH_SHORT).show();
+            }
+        });
         return view;
     }
 
@@ -89,16 +101,9 @@ public class URLBookMarkFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         realm = Realm.getDefaultInstance();
 
-//        realm.beginTransaction();
-//        BookMarkModel bookMarkModel = realm.createObject(BookMarkModel.class);
-//        bookMarkModel.setId(UUID.randomUUID().toString());
-//        bookMarkModel.setUrlName("Google");
-//        bookMarkModel.setUrl("https://www.google.com/");
-//        realm.commitTransaction();
-
         RealmResults<BookMarkModel> realmResults = realm.allObjects(BookMarkModel.class);
 
-        Log.d("TAG", "class " + realmResults.get(0).getUrl());
+//        Log.d("TAG", "class " + realmResults.get(0).getUrl());
         for (BookMarkModel model : realmResults) {
             Log.d("TAG", " urlName " + model.getUrlName());
             Log.d("TAG", " url " + model.getUrl());
@@ -112,4 +117,9 @@ public class URLBookMarkFragment extends Fragment {
         super.onDestroy();
         realm.close();
     }
+
+//    @Override
+//    public void positionSelected(int newPosition) {
+//        position = newPosition;
+//    }
 }

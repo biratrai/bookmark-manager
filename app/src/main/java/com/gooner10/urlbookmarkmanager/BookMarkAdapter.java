@@ -17,6 +17,8 @@ import io.realm.RealmResults;
 public class BookMarkAdapter extends BaseAdapter {
     private final Context context;
     RealmResults<BookMarkModel> realmResults;
+    CallBack callBack;
+
 //    ArrayList<String> realmResults;
 
     public BookMarkAdapter(Context context, RealmResults<BookMarkModel> realmResults) {
@@ -49,6 +51,11 @@ public class BookMarkAdapter extends BaseAdapter {
         urlName.setText(realmResults.get(position).getUrlName());
         urlText.setText(realmResults.get(position).getUrl());
 //        urlName.setText(realmResults.get(position));
+//        callBack.positionSelected(position);
         return rowView;
+    }
+
+    public interface CallBack {
+        void positionSelected(int position);
     }
 }
