@@ -1,6 +1,8 @@
 package com.gooner10.urlbookmarkmanager;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -9,9 +11,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +46,7 @@ public class URLBookMarkFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_url_bookmark, container, false);
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         mListView = (ListView) view.findViewById(R.id.listView);
+        SearchView searchView = (SearchView) view.findViewById(R.id.search_view);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
@@ -90,7 +95,35 @@ public class URLBookMarkFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position1, long id) {
 
                 TextView urlLink = (TextView) view.findViewById(R.id.url);
-                Toast.makeText(getActivity(), "Toast "+urlLink.getText() + position1, Toast.LENGTH_SHORT).show();
+                String url = String.valueOf(urlLink.getText());
+
+                if (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) {
+                    Uri uri = Uri.parse(url);
+//                    Intent i = new Intent(Intent.ACTION_VIEW);
+//                    i.setData(uri);
+//                    startActivity(i);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getActivity(), "Couldnot resolve URL ", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Invalid URL " + url, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                bookMarkAdapter.getf
+                return false;
             }
         });
         return view;

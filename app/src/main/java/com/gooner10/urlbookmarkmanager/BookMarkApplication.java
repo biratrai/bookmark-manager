@@ -18,7 +18,7 @@ public class BookMarkApplication extends Application {
                 .name("BookMark")
                 .build();
 
-        Realm.deleteRealm(realmConfiguration);
+//        Realm.deleteRealm(realmConfiguration);
         // Make this realm default
         Realm.setDefaultConfiguration(realmConfiguration);
     }
