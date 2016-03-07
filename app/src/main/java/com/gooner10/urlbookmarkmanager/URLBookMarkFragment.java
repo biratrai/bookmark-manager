@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.gooner10.urlbookmarkmanager.models.BookMarkModel;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import io.realm.Realm;
@@ -36,7 +35,6 @@ public class URLBookMarkFragment extends Fragment {
     private ListView mListView;
     private Realm realm;
     private BookMarkAdapter bookMarkAdapter;
-    private int position;
 
     public URLBookMarkFragment() {
     }
@@ -74,8 +72,7 @@ public class URLBookMarkFragment extends Fragment {
                         bookMarkModel.setUrlName(urlName.getText().toString());
                         bookMarkModel.setUrl(urlLink.getText().toString());
                         realm.commitTransaction();
-                        bookMarkAdapter = new BookMarkAdapter(getActivity(), getArrayListModel());
-                        mListView.setAdapter(bookMarkAdapter);
+                        bookMarkAdapter.notifyDataSetChanged();
                     }
                 })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -118,8 +115,12 @@ public class URLBookMarkFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                bookMarkAdapter.getFilter().filter(newText);
-//                Toast.makeText(getActivity(), "Text Change ", Toast.LENGTH_SHORT).show();
+                RealmResults<BookMarkModel> realmResults = realm.allObjects(BookMarkModel.class)
+                        .where()
+                        .contains("urlName", newText)
+                        .findAll();
+                bookMarkAdapter = new BookMarkAdapter(getActivity(), realmResults);
+                mListView.setAdapter(bookMarkAdapter);
                 return false;
             }
         });
@@ -131,20 +132,9 @@ public class URLBookMarkFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         realm = Realm.getDefaultInstance();
 
-//        RealmResults<BookMarkModel> realmResults = realm.allObjects(BookMarkModel.class);
-
-//        Log.d("TAG", "class " + realmResults.getClass());
-        bookMarkAdapter = new BookMarkAdapter(getActivity(), getArrayListModel());
-        mListView.setAdapter(bookMarkAdapter);
-    }
-
-    public ArrayList<BookMarkModel> getArrayListModel() {
         RealmResults<BookMarkModel> realmResults = realm.allObjects(BookMarkModel.class);
-        ArrayList<BookMarkModel> bookMarkModels = new ArrayList<>();
-        for (BookMarkModel model : realmResults) {
-            bookMarkModels.add(model);
-        }
-        return bookMarkModels;
+        bookMarkAdapter = new BookMarkAdapter(getActivity(), realmResults);
+        mListView.setAdapter(bookMarkAdapter);
     }
 
     @Override
@@ -152,9 +142,4 @@ public class URLBookMarkFragment extends Fragment {
         super.onDestroy();
         realm.close();
     }
-
-//    @Override
-//    public void positionSelected(int newPosition) {
-//        position = newPosition;
-//    }
 }
