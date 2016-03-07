@@ -2,7 +2,7 @@ BookMark URL Manager!
 ===================
 
 
-This project uses  **Realm**[^realmedit]. Don't delete me, I'm very helpful! I can be recovered anyway in the **Utils** tab of the <i class="icon-cog"></i> **Settings** dialog.
+This project uses  **Realm**. Don't delete me, I'm very helpful! I can be recovered anyway in the **Utils** tab of the <i class="icon-cog"></i> **Settings** dialog.
 
 ----------
 
@@ -23,6 +23,6 @@ BookMark URL Manager stores the user URL into the persistant storage.
 
 ### Supporting Links
 
-  [^realmedit]: [Realm](https://realm.io/) is Realm is a replacement for SQLite & Core Data. Realm is not an ORM on top of SQLite. Instead it uses its own persistence engine, built for simplicity (& speed). Easy to use, Cross platform, trusted and open source.
+  [Realm](https://realm.io/) is Realm is a replacement for SQLite & Core Data. Realm is not an ORM on top of SQLite. Instead it uses its own persistence engine, built for simplicity (& speed). Easy to use, Cross platform, trusted and open source.
 
 
