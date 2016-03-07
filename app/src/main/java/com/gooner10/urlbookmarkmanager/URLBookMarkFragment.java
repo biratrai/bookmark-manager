@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.gooner10.urlbookmarkmanager.models.BookMarkModel;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import io.realm.Realm;
@@ -122,7 +123,8 @@ public class URLBookMarkFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                bookMarkAdapter.getf
+                bookMarkAdapter.getFilter().filter(newText);
+//                Toast.makeText(getActivity(), "Text Change ", Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -135,13 +137,15 @@ public class URLBookMarkFragment extends Fragment {
         realm = Realm.getDefaultInstance();
 
         RealmResults<BookMarkModel> realmResults = realm.allObjects(BookMarkModel.class);
-
-//        Log.d("TAG", "class " + realmResults.get(0).getUrl());
+        ArrayList<BookMarkModel> bookMarkModels = new ArrayList<>();
+        Log.d("TAG", "class " + realmResults.getClass());
         for (BookMarkModel model : realmResults) {
             Log.d("TAG", " urlName " + model.getUrlName());
             Log.d("TAG", " url " + model.getUrl());
+            bookMarkModels.add(model);
         }
-        bookMarkAdapter = new BookMarkAdapter(getActivity(), realmResults);
+        bookMarkAdapter = new BookMarkAdapter(getActivity(), bookMarkModels);
+        Log.d("TAG", " url " + bookMarkModels.size());
         mListView.setAdapter(bookMarkAdapter);
     }
 
