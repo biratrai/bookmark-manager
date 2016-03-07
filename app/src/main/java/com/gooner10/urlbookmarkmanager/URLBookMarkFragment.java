@@ -1,22 +1,17 @@
 package com.gooner10.urlbookmarkmanager;
 
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.URLUtil;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gooner10.urlbookmarkmanager.models.BookMarkModel;
 
@@ -32,9 +27,10 @@ import io.realm.RealmResults;
  */
 public class URLBookMarkFragment extends Fragment {
 
-    private ListView mListView;
+    private RecyclerView mRecyclerView;
     private Realm realm;
     private BookMarkAdapter bookMarkAdapter;
+    private LinearLayoutManager mLayoutManager;
 
     public URLBookMarkFragment() {
     }
@@ -43,23 +39,30 @@ public class URLBookMarkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_url_bookmark, container, false);
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        mListView = (ListView) view.findViewById(R.id.listView);
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+
         SearchView searchView = (SearchView) view.findViewById(R.id.search_view);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                // 1. Instantiate an AlertDialog.Builder with its constructor
+                // Instantiate an AlertDialog.Builder with its constructor
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
                 // Get the layout inflater
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 View dialogView = inflater.inflate(R.layout.user_input, null);
                 final EditText urlName = (EditText) dialogView.findViewById(R.id.urlName);
                 final EditText urlLink = (EditText) dialogView.findViewById(R.id.urlLink);
+
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
                 builder.setView(dialogView);
 
-                // 2. Chain together various setter methods to set the dialog characteristics
+                // Chain together various setter methods to set the dialog characteristics
                 builder.setTitle(R.string.dialog_title);
 
                 // Add action buttons
@@ -80,30 +83,9 @@ public class URLBookMarkFragment extends Fragment {
 
                             }
                         });
-                // 3. Get the AlertDialog from create()
+                // Get the AlertDialog from create() and show()
                 AlertDialog dialog = builder.create();
                 dialog.show();
-            }
-        });
-
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position1, long id) {
-
-                TextView urlLink = (TextView) view.findViewById(R.id.url);
-                String url = String.valueOf(urlLink.getText());
-
-                if (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) {
-                    Uri uri = Uri.parse(url);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                        startActivity(intent);
-                    } else {
-                        Toast.makeText(getActivity(), "Couldnot resolve URL ", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Invalid URL " + url, Toast.LENGTH_SHORT).show();
-                }
             }
         });
 
@@ -115,12 +97,13 @@ public class URLBookMarkFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                // Query Realm with the newText string that we receive from SearchView
                 RealmResults<BookMarkModel> realmResults = realm.allObjects(BookMarkModel.class)
                         .where()
                         .contains("urlName", newText)
                         .findAll();
                 bookMarkAdapter = new BookMarkAdapter(getActivity(), realmResults);
-                mListView.setAdapter(bookMarkAdapter);
+                mRecyclerView.setAdapter(bookMarkAdapter);
                 return false;
             }
         });
@@ -132,9 +115,10 @@ public class URLBookMarkFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         realm = Realm.getDefaultInstance();
 
+        // Query Realm to return all the Objects stored
         RealmResults<BookMarkModel> realmResults = realm.allObjects(BookMarkModel.class);
         bookMarkAdapter = new BookMarkAdapter(getActivity(), realmResults);
-        mListView.setAdapter(bookMarkAdapter);
+        mRecyclerView.setAdapter(bookMarkAdapter);
     }
 
     @Override
