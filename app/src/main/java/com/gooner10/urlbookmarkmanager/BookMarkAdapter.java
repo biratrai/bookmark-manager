@@ -116,7 +116,7 @@ public class BookMarkAdapter extends BaseAdapter implements Filterable {
         protected void publishResults(CharSequence constraint, FilterResults results) {
             Log.d("GAG", "publish result constraint " + results.values);
 //            bookMarkModels = (ArrayList<BookMarkModel>) results.values;
-            notifyDataSetChanged();
+//            notifyDataSetChanged();
         }
     }
 }

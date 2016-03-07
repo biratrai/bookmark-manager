@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,15 +68,14 @@ public class URLBookMarkFragment extends Fragment {
                 builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-//                        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                                .setAction("Action", null).show();
                         realm.beginTransaction();
                         BookMarkModel bookMarkModel = realm.createObject(BookMarkModel.class);
                         bookMarkModel.setId(UUID.randomUUID().toString());
                         bookMarkModel.setUrlName(urlName.getText().toString());
                         bookMarkModel.setUrl(urlLink.getText().toString());
                         realm.commitTransaction();
-                        bookMarkAdapter.notifyDataSetChanged();
+                        bookMarkAdapter = new BookMarkAdapter(getActivity(), getArrayListModel());
+                        mListView.setAdapter(bookMarkAdapter);
                     }
                 })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -100,9 +98,6 @@ public class URLBookMarkFragment extends Fragment {
 
                 if (URLUtil.isHttpsUrl(url) || URLUtil.isHttpUrl(url)) {
                     Uri uri = Uri.parse(url);
-//                    Intent i = new Intent(Intent.ACTION_VIEW);
-//                    i.setData(uri);
-//                    startActivity(i);
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                         startActivity(intent);
@@ -136,17 +131,20 @@ public class URLBookMarkFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         realm = Realm.getDefaultInstance();
 
+//        RealmResults<BookMarkModel> realmResults = realm.allObjects(BookMarkModel.class);
+
+//        Log.d("TAG", "class " + realmResults.getClass());
+        bookMarkAdapter = new BookMarkAdapter(getActivity(), getArrayListModel());
+        mListView.setAdapter(bookMarkAdapter);
+    }
+
+    public ArrayList<BookMarkModel> getArrayListModel() {
         RealmResults<BookMarkModel> realmResults = realm.allObjects(BookMarkModel.class);
         ArrayList<BookMarkModel> bookMarkModels = new ArrayList<>();
-        Log.d("TAG", "class " + realmResults.getClass());
         for (BookMarkModel model : realmResults) {
-            Log.d("TAG", " urlName " + model.getUrlName());
-            Log.d("TAG", " url " + model.getUrl());
             bookMarkModels.add(model);
         }
-        bookMarkAdapter = new BookMarkAdapter(getActivity(), bookMarkModels);
-        Log.d("TAG", " url " + bookMarkModels.size());
-        mListView.setAdapter(bookMarkAdapter);
+        return bookMarkModels;
     }
 
     @Override
