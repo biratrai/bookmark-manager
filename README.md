@@ -2,7 +2,7 @@ BookMark URL Manager!
 ===================
 
 
-This project uses  **Realm**. Don't delete me, I'm very helpful! I can be recovered anyway in the **Utils** tab of the <i class="icon-cog"></i> **Settings** dialog.
+This project uses  **Realm**. 
 
 ----------
 
